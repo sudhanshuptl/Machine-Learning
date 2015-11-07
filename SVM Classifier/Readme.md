@@ -22,7 +22,7 @@ Support vector machines (SVMs) are a set of supervised learning methods used for
   * Label vector have 9 classes . Each for Identify hand-written digit from [0,1,2,3,4,5,6,7,8,9].
   
 ### Notes
-These arguments used to customise you kernels 
+These arguments used to customise you Classifier
  * kernel : Used to convert low dimensional feature space to high dimensional space in order to make it separable.
  * C  :- Controls trade off between smooth decision boundary and classify training point correctly. High value leads to over-fitting that is not good for generalisation
  * gamma :- Defines how far influence of a single training example reach.(high value of gamma leads to over fitting) so for generalise classification we need low value of gamma .
