@@ -24,13 +24,15 @@ def create_dataset(dataset, Train=True):
     #calculating Avg Age and emb
     emb,freq,ide=dict(),dict(),0
     avgAge,count=0,0
+    avgFare,cnt=0,0
     for data in dataset:
         if data['Age'] !='':
-            try:
-                avgAge+=float(data['Age'])
-                count+=1
-            except:
-                print 'Eror, ',data['Age']
+            avgAge+=float(data['Age'])
+            count+=1
+        if data['Fare']!='':
+            avgFare+=float(data['Fare'])
+            cnt +=1
+
         if data['Embarked'] not in emb:
             emb[data['Embarked']]=ide
             ide+=1
@@ -47,6 +49,54 @@ def create_dataset(dataset, Train=True):
 
 
     avgAge=avgAge/count
+    avgFare=avgFare/cnt
+    #Giving numbers to cabin
+    cpchar='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    cabin={}
+    for i in range(len(cpchar)):
+        if cpchar[i] not in cabin:
+            cabin[cpchar[i]]=i+1
+    del cpchar
+
+    for data in dataset:
+        if Train:
+            target.append(int(data['Survived']))
+        else:
+            target.append(int(data['PassengerId']))
+        temp=[]
+        #temp.append(int(data['PassengerId']))
+        temp.append(int(data['Pclass']))
+        temp.append(int(data['SibSp']))
+        temp.append(int(data['Parch']))
+        try:
+            temp.append(float(data['Fare'])/avgFare)
+        except:
+            if data['Fare']=='':
+                temp.append(1)
+            else:
+                print 'Error',data['Fare']
+            exit()
+        if data['Sex']=='male':
+            temp.append(1)
+        else:
+            temp.append(0)
+        if data['Age']=='':
+            temp.append(avgAge)
+        else:
+            temp.append(float(data['Age']))
+        
+        if data['Embarked'] !='':
+            temp.append(emb[data['Embarked']])
+        else:
+            temp.append(emb[Barked])
+        if data['Cabin'] !='':
+            temp.append(cabin[data['Cabin'][0]])
+        else:
+            temp.append(0)
+        feature.append(temp)
+    return np.array(feature),np.array(target)
+
+    avgAge=avgAge/count
     
     for data in dataset:
         if Train:
@@ -58,7 +108,7 @@ def create_dataset(dataset, Train=True):
         temp.append(int(data['Pclass']))
         temp.append(int(data['SibSp']))
         temp.append(int(data['Parch']))
-        temp.append(float(data['Fare'])/240)
+        temp.append(float(data['Fare']))
         if data['Sex']=='male':
             temp.append(1)
         else:
@@ -86,7 +136,7 @@ if __name__=='__main__':
     #Draw(Y,X)
     
     #Now Create & Train Our Classifier
-    clsf=SVC(kernel='rbf',gamma=10,C=1) #SVM Classier
+    clsf=SVC(kernel='rbf',gamma=0.1,C=1) #SVM Classier
     print 'Training Started ..'
     a = datetime.datetime.now()
     clsf.fit(X, Y)

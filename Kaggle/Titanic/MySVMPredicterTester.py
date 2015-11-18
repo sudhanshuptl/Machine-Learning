@@ -69,10 +69,10 @@ def create_dataset(dataset, Train=True):
         temp.append(int(data['SibSp']))
         temp.append(int(data['Parch']))
         try:
-            temp.append(float(data['Fare']))
+            temp.append(float(data['Fare'])/avgFare)
         except:
             if data['Fare']=='':
-                temp.append(avgFare)
+                temp.append(1)
             else:
                 print 'Error',data['Fare']
             exit()
@@ -107,7 +107,7 @@ if __name__=='__main__':
     #Draw(Y,X)
     
     #Now Create & Train Our Classifier
-    clsf=SVC(kernel='rbf',gamma=100,C=1) #SVM Classier
+    clsf=SVC(kernel='rbf',gamma=0.1,C=1) #SVM Classier
     print 'Training Started ..'
     a = datetime.datetime.now()
     clsf.fit(X, Y)
