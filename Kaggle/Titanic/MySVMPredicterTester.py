@@ -24,13 +24,15 @@ def create_dataset(dataset, Train=True):
     #calculating Avg Age and emb
     emb,freq,ide=dict(),dict(),0
     avgAge,count=0,0
+    avgFare,cnt=0,0
     for data in dataset:
         if data['Age'] !='':
-            try:
-                avgAge+=float(data['Age'])
-                count+=1
-            except:
-                print 'Eror, ',data['Age']
+            avgAge+=float(data['Age'])
+            count+=1
+        if data['Fare']!='':
+            avgFare+=float(data['Fare'])
+            cnt +=1
+
         if data['Embarked'] not in emb:
             emb[data['Embarked']]=ide
             ide+=1
@@ -47,7 +49,15 @@ def create_dataset(dataset, Train=True):
 
 
     avgAge=avgAge/count
-    
+    avgFare=avgFare/cnt
+    #Giving numbers to cabin
+    cpchar='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    cabin={}
+    for i in range(len(cpchar)):
+        if cpchar[i] not in cabin:
+            cabin[cpchar[i]]=i+1
+    del cpchar
+
     for data in dataset:
         if Train:
             target.append(int(data['Survived']))
@@ -58,7 +68,14 @@ def create_dataset(dataset, Train=True):
         temp.append(int(data['Pclass']))
         temp.append(int(data['SibSp']))
         temp.append(int(data['Parch']))
-        temp.append(float(data['Fare'])/240)
+        try:
+            temp.append(float(data['Fare']))
+        except:
+            if data['Fare']=='':
+                temp.append(avgFare)
+            else:
+                print 'Error',data['Fare']
+            exit()
         if data['Sex']=='male':
             temp.append(1)
         else:
@@ -67,12 +84,16 @@ def create_dataset(dataset, Train=True):
             temp.append(avgAge)
         else:
             temp.append(float(data['Age']))
-        feature.append(temp)
+        
         if data['Embarked'] !='':
             temp.append(emb[data['Embarked']])
         else:
             temp.append(emb[Barked])
-    
+        if data['Cabin'] !='':
+            temp.append(cabin[data['Cabin'][0]])
+        else:
+            temp.append(0)
+        feature.append(temp)
     return np.array(feature),np.array(target)
 
 if __name__=='__main__':
@@ -86,7 +107,7 @@ if __name__=='__main__':
     #Draw(Y,X)
     
     #Now Create & Train Our Classifier
-    clsf=SVC(kernel='rbf',gamma=10,C=1) #SVM Classier
+    clsf=SVC(kernel='rbf',gamma=100,C=1) #SVM Classier
     print 'Training Started ..'
     a = datetime.datetime.now()
     clsf.fit(X, Y)
@@ -94,6 +115,7 @@ if __name__=='__main__':
     print 'Training Is completed, Time taken for training :',b-a
     
     #Now Load Testing dataset
+    '''
     parse_data=parse_csv(Test_file_name,)
     P,Q= create_dataset(parse_data,Train=False)
     
@@ -109,3 +131,10 @@ if __name__=='__main__':
         writer.writeheader()
         for i in range(len(P)):
             writer.writerow({'PassengerId': Q[i], 'Survived': prediction[i]})
+    '''
+    parse_data=parse_csv(Train_File_name)
+    P,Q= create_dataset(parse_data,Train=True)
+    prediction=clsf.predict(P)
+    from sklearn.metrics import accuracy_score
+    print 'Accuracy Check ',accuracy_score(prediction,Q)*100,'%  Wow _/\_ that is GOOD :)'
+    
