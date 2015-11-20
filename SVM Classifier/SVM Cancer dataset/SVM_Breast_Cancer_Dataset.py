@@ -82,4 +82,7 @@ if __name__=='__main__':
     prediction=clsf.predict(P)
     from sklearn.metrics import accuracy_score
     print 'Accuracy Check ',accuracy_score(prediction,Q)*100,'%  Wow _/\_ that is GOOD :)'
+    print 'real Output,   predicted Output,     freatures'
+    for i in range(50):
+        print Q[i],'             ',prediction[i],'               ',P[i]
     
