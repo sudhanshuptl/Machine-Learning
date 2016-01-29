@@ -10,6 +10,7 @@ We Will use these tools for many data analysis and prediction purposes.
  * sklearn [Python Package]
  * panda [Python Package]
  * matplotlib [Python Package]
+ * unicodecsv [Python Package]
  etc
  
  ## How to Install
