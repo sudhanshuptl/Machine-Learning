@@ -8,7 +8,7 @@ We Will use these tools for many data analysis and prediction purposes.
  * scipy [Python Package]
  * numpy [Python Package]
  * sklearn [Python Package]
- * panda [Python Package]
+ * pandas [Python Package]
  * matplotlib [Python Package]
  * unicodecsv [Python Package]
  etc
